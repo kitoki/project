@@ -38,21 +38,32 @@ jobs:
       run: |
         pip install buildozer
         sudo apt-get install -y liblzma-dev
-        buildozer -v android debug
 
     - name: Debug List files in bin directory
       run: |
-        ls -alh bin
+        ls -alh bin || echo "bin directory does not exist"
 
     - name: Build APK
       run: |
-        buildozer android debug
-        if [ -d "bin" ]; then cp -r bin /home/runner/work/${{ github.project }}; fi
+        buildozer android debug > buildozer.log 2>&1
+        cat buildozer.log
+
+    - name: Upload Buildozer Log
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: buildozer-log
+        path: buildozer.log
+
+    - name: Copy APK to workspace
+      if: success()
+      run: |
+        if [ -d "bin" ]; then cp -r bin /home/runner/work/project/project/bin; fi
 
     - name: Upload APK
-      if: always()
+      if: success()
       uses: actions/upload-artifact@v3
       with:
         name: apk
-        path: bin/*.apk
+        path: /home/runner/work/project/project/bin/*.apk
         if-no-files-found: warn
