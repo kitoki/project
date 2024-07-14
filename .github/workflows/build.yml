@@ -13,30 +13,43 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
-        fetch-depth: 0
+        python-version: '3.8'
 
     - name: Install dependencies
       run: |
-        sudo apt update
-        sudo apt install -y python3-pip python3-setuptools git build-essential libssl-dev libffi-dev python3-dev
-        sudo apt install -y openjdk-8-jdk
+        sudo apt-get update
+        sudo apt-get install -y \
+          python3-pip python3-setuptools git build-essential libssl-dev libffi-dev python3-dev \
+          openjdk-8-jdk \
+          libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
+          libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev \
+          libgstreamer1.0 libgstreamer-plugins-base1.0-dev
         pip install --upgrade pip
         pip install Cython==0.29.21 virtualenv
         pip install kivy
+        pip install PyMuPDF
+        pip install kivy[uix]
+
 
     - name: Set up Buildozer
       run: |
         pip install buildozer
+        sudo apt-get install -y liblzma-dev
         buildozer -v android debug
 
     - name: Build APK
       run: |
         buildozer android debug
-        cp -r bin /home/runner/work/project/
+        if [ -d "bin" ]; then cp -r bin /home/runner/work/${{ github.project }}; fi
 
     - name: Upload APK
-      uses: actions/upload-artifact@v2
+      if: always()
+      uses: actions/upload-artifact@v3
       with:
         name: apk
         path: bin/*.apk
+        if-no-files-found: warn
