@@ -36,7 +36,7 @@ jobs:
     - name: Build APK
       run: |
         buildozer android debug
-        cp -r bin /home/runner/work/kitoki/project/
+        cp -r bin /home/runner/work/project/
 
     - name: Upload APK
       uses: actions/upload-artifact@v2
