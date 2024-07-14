@@ -34,12 +34,15 @@ jobs:
         pip install PyMuPDF
         pip install kivy[uix]
 
-
     - name: Set up Buildozer
       run: |
         pip install buildozer
         sudo apt-get install -y liblzma-dev
         buildozer -v android debug
+
+    - name: Debug: List files in bin directory
+      run: |
+        ls -alh bin
 
     - name: Build APK
       run: |
