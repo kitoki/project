@@ -10,6 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      ANDROID_HOME: ${{ github.workspace }}/.buildozer/android/platform/android-sdk
+      PATH: ${{ env.ANDROID_HOME }}/cmdline-tools/latest/bin:${{ env.ANDROID_HOME }}/platform-tools:$PATH
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -39,6 +43,17 @@ jobs:
         pip install buildozer
         sudo apt-get install -y liblzma-dev
 
+    - name: Install Android SDK
+      run: |
+        mkdir -p $ANDROID_HOME
+        cd $ANDROID_HOME
+        wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip -O commandlinetools.zip
+        unzip commandlinetools.zip
+        mkdir -p cmdline-tools/latest
+        mv cmdline-tools/* cmdline-tools/latest/
+        yes | sdkmanager --licenses
+        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+
     - name: Debug List of files in bin directory
       run: |
         ls -alh bin || echo "bin directory does not exist"
@@ -49,7 +64,6 @@ jobs:
         cat buildozer.log
 
     - name: Upload Buildozer Log
-      if: failure()
       uses: actions/upload-artifact@v3
       with:
         name: buildozer-log
