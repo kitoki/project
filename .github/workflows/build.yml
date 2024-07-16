@@ -59,4 +59,24 @@ jobs:
     - name: Build APK
       run: |
         export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
-        export PATH=$ANDROID_HOME/cmdline
+        export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+        buildozer android debug > buildozer.log 2>&1
+        cat buildozer.log
+
+    - name: Upload Buildozer Log
+      uses: actions/upload-artifact@v3
+      with:
+        name: buildozer-log
+        path: buildozer.log
+
+    - name: Copy APK to workspace
+      run: |
+        if [ -d "bin" ]; then cp -r bin ${GITHUB_WORKSPACE}/project/bin; else echo "bin directory does not exist"; fi
+        ls -alh ${GITHUB_WORKSPACE}/project/bin || echo "${GITHUB_WORKSPACE}/project/bin directory does not exist"
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: apk
+        path: ${GITHUB_WORKSPACE}/project/bin/*.apk
+        if-no-files-found: warn
