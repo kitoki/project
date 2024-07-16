@@ -10,10 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      ANDROID_HOME: ${{ github.workspace }}/.buildozer/android/platform/android-sdk
-      PATH: ${{ env.ANDROID_HOME }}/cmdline-tools/latest/bin:${{ env.ANDROID_HOME }}/platform-tools:$PATH
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -45,12 +41,14 @@ jobs:
 
     - name: Install Android SDK
       run: |
-        mkdir -p $ANDROID_HOME
-        cd $ANDROID_HOME
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk
+        cd $HOME/.buildozer/android/platform/android-sdk
         wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip -O commandlinetools.zip
         unzip commandlinetools.zip
         mkdir -p cmdline-tools/latest
         mv cmdline-tools/* cmdline-tools/latest/
+        export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
+        export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
         yes | sdkmanager --licenses
         sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
@@ -60,6 +58,8 @@ jobs:
 
     - name: Build APK
       run: |
+        export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
+        export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
         buildozer android debug > buildozer.log 2>&1
         cat buildozer.log
 
@@ -74,7 +74,7 @@ jobs:
       run: |
         if [ -d "bin" ]; then cp -r bin ${GITHUB_WORKSPACE}/project/bin; fi
 
-    - name: Upload APK test
+    - name: Upload APK
       if: success()
       uses: actions/upload-artifact@v3
       with:
