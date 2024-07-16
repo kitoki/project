@@ -74,7 +74,7 @@ jobs:
       run: |
         if [ -d "bin" ]; then cp -r bin ${GITHUB_WORKSPACE}/project/bin; fi
 
-    - name: Upload APK
+    - name: Upload APK test
       if: success()
       uses: actions/upload-artifact@v3
       with:
