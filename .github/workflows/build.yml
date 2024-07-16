@@ -39,7 +39,7 @@ jobs:
         pip install buildozer
         sudo apt-get install -y liblzma-dev
 
-    - name: Debug List files in bin directory
+    - name: Debug List of files in bin directory
       run: |
         ls -alh bin || echo "bin directory does not exist"
 
