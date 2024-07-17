@@ -109,7 +109,7 @@ jobs:
         if [ -d "bin" ]; then cp -r bin ${GITHUB_WORKSPACE}/project/bin; else echo "bin directory does not exist"; fi
         ls -alh ${GITHUB_WORKSPACE}/project/bin || echo "${GITHUB_WORKSPACE}/project/bin directory does not exist"
 
-    - name: Upload APK
+    - name: Upload an APK
       uses: actions/upload-artifact@v3
       with:
         name: apk
