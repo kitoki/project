@@ -66,11 +66,15 @@ jobs:
         export ANDROID_HOME=${{ github.workspace }}/.android-sdk
         export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
         mkdir -p $ANDROID_HOME
+        echo "ANDROID_HOME is set to: $ANDROID_HOME"
+        echo "PATH is set to: $PATH"
         ls -alh $ANDROID_HOME  # Debugging: Check directory contents
         sdkmanager --list || true  # Debugging: List installed SDK components
         sdkmanager --list_installed > installed_sdk.txt || true
         if ! grep -q 'platform-tools' installed_sdk.txt; then
+          echo "Accepting SDK licenses..."
           yes | sdkmanager --licenses
+          echo "Installing SDK components..."
           sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-30" "build-tools;30.0.3"
         else
           echo "Android SDK is already installed"
