@@ -39,18 +39,16 @@ jobs:
         pip install buildozer
         sudo apt-get install -y liblzma-dev
 
-    - name: Install Android SDK
+    - name: Set up Android SDK
       run: |
-        mkdir -p $HOME/.buildozer/android/platform/android-sdk
-        cd $HOME/.buildozer/android/platform/android-sdk
-        wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip -O commandlinetools.zip
-        unzip commandlinetools.zip -d cmdline-tools
-        mkdir -p cmdline-tools/latest
-        mv cmdline-tools/cmdline-tools/* cmdline-tools/latest/
-        export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
+        export ANDROID_HOME=/usr/local/lib/android/sdk
         export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
         yes | sdkmanager --licenses
         sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+
+    - name: Set ANDROID_HOME in buildozer.spec
+      run: |
+        sed -i 's|# (str) Path to where the android sdk is installed|ANDROID_HOME = /usr/local/lib/android/sdk|' buildozer.spec
 
     - name: Debug List of files in bin directory
       run: |
@@ -58,7 +56,7 @@ jobs:
 
     - name: Build APK
       run: |
-        export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
+        export ANDROID_HOME=/usr/local/lib/android/sdk
         export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
         buildozer android debug > buildozer.log 2>&1 || true
         cat buildozer.log
