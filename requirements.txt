@@ -1,9 +1,13 @@
-PyMuPDF==1.18.13
+PyMuPDF
 
 # Your other dependencies here
-buildozer==1.2.0
-virtualenv==20.13.0
+buildozer
+Cython==0.29.21
+virtualenv
 
 # Specify kivy with an older pip version due to metadata issue
 pip<24.1
-kivy==2.0.0
+kivy[uix]
+
+# Note: For liblzma-dev, it's typically handled outside of requirements.txt
+# as it's a system library installed via apt-get. It's not managed by pip.
