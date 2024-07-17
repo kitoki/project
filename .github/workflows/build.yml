@@ -68,6 +68,9 @@ jobs:
       with:
         name: buildozer-log
         path: buildozer.log
+ 
+    - name: Ensure destination directory exists
+      run: mkdir -p ${GITHUB_WORKSPACE}/project/bin
 
     - name: Copy APK to workspace
       run: |
