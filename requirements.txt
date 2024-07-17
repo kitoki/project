@@ -1,3 +1,9 @@
-buildozer==1.2.0
-kivy==2.0.0
 PyMuPDF==1.18.13
+
+# Your other dependencies here
+buildozer==1.2.0
+virtualenv==20.13.0
+
+# Specify kivy with an older pip version due to metadata issue
+pip<24.1
+kivy==2.0.0
